@@ -1,16 +1,12 @@
 name: Deploy to GitHub Pages
 
 on:
-  # 1. Päivitä kun työnnät koodia
   push:
     branches: [main]
   
-  # 2. Päivitä automaattisesti 4 tunnin välein
-  # (6 kertaa päivässä = n. 180 kutsua/kk -> Jää reilusti varaa 1000 rajaan)
   schedule:
-    - cron: '0 */4 * * *'
-
-  # 3. Salli manuaalinen päivitys napin painalluksella
+    - cron: '0 * * * *'  # ← VAIHDA: Joka tunti tasalta
+  
   workflow_dispatch:
 
 permissions:
@@ -41,7 +37,6 @@ jobs:
       - name: Build site
         run: npm run build
         env:
-          # Tämä hakee API-avaimen GitHubin asetuksista
           METALPRICE_API_KEY: ${{ secrets.METALPRICE_API_KEY }}
 
       - name: Upload artifact
