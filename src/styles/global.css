@@ -1,0 +1,83 @@
+/* src/styles/global.css */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    @apply scroll-smooth;
+    
+    scroll-padding-top: 100px; 
+  }
+  
+  body {
+    /* Vaalea pohja, tumma teksti */
+    @apply font-sans antialiased text-gray-900 bg-gray-50;
+    /* Estää "kumivenytyksen" mobiilissa, pitää tuntuman jämäkkänä */
+    overscroll-behavior-y: none; 
+  }
+
+  /* Tyylitelty scrollbar (Premium-look) */
+  ::-webkit-scrollbar {
+    width: 10px;
+  }
+  ::-webkit-scrollbar-track {
+    background: #0B0F19;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #4B5563;
+    border-radius: 5px;
+    border: 2px solid #0B0F19;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #D4AF37; /* Gold hover */
+  }
+}
+
+@layer components {
+  /* Moderni valkoinen kortti varjolla */
+  .card-white {
+    @apply bg-white rounded-3xl border border-gray-100 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.1)];
+  }
+  
+  /* Vaalea input-kenttä */
+  .input-light {
+    @apply w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-4 
+           text-gray-900 font-bold text-xl placeholder-gray-400 outline-none 
+           transition-all duration-300
+           focus:border-gold-400 focus:ring-4 focus:ring-gold-400/10 focus:bg-white;
+  }
+
+  /* CTA-painike */
+  .btn-cta {
+    @apply inline-flex items-center justify-center gap-2 px-8 py-4 
+           bg-gradient-to-r from-gold-300 to-gold-500 
+           text-[#0B0F19] font-bold text-lg rounded-full 
+           transform transition-all duration-300
+           hover:from-gold-200 hover:to-gold-400 hover:scale-[1.02];
+  }
+}
+
+/* Animaatiot */
+@keyframes blob {
+  0% { transform: translate(0px, 0px) scale(1); }
+  33% { transform: translate(30px, -50px) scale(1.1); }
+  66% { transform: translate(-20px, 20px) scale(0.9); }
+  100% { transform: translate(0px, 0px) scale(1); }
+}
+.animate-blob { animation: blob 10s infinite; }
+.animation-delay-2000 { animation-delay: 2s; }
+.animation-delay-4000 { animation-delay: 4s; }
+
+/* Scroll-animaatiot */
+.reveal { opacity: 0; transform: translateY(30px); transition: all 1s cubic-bezier(0.5, 0, 0, 1); }
+.reveal.active { opacity: 1; transform: translateY(0); }
+
+/* React-komponenttien fade-in animaatio */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-fade-in {
+  animation: fadeIn 0.5s ease-out forwards;
+}

@@ -1,0 +1,106 @@
+---
+const navLinks = [
+  { href: '#laskuri', label: 'Laskuri' },
+  { href: '#leimat', label: 'Kultaleimat' },
+  { href: '#ukk', label: 'Usein kysyttyä' },
+];
+
+const currentPath = Astro.url.pathname;
+---
+
+<header class="fixed top-0 w-full z-50 bg-[#0B0F19]/95 backdrop-blur-md border-b border-white/5 transition-all duration-300" id="main-header">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex items-center justify-between h-20">
+      
+      {/* LOGO - Ikoni poistettu, värit vaihdettu: Kulta (kulta) laskuri (valkoinen) */}
+      <a href="#" class="flex flex-col group relative z-50" aria-label="Palaa alkuun">
+        <span class="text-2xl font-black tracking-tight leading-none transition-colors">
+          <span class="text-gold-400">Kulta</span><span class="text-white">laskuri</span><span class="text-gold-400">.fi</span>
+        </span>
+        <span class="text-[10px] text-gray-400 uppercase tracking-[0.2em] leading-none mt-1 ml-0.5 group-hover:text-gold-200 transition-colors">
+          Luotettava arvio
+        </span>
+      </a>
+
+      {/* DESKTOP NAVIGAATIO */}
+      <nav class="hidden md:flex items-center gap-8">
+        {navLinks.map((link) => (
+          <a 
+            href={link.href}
+            class="text-sm font-bold text-gray-400 hover:text-gold-400 transition-all duration-200 relative py-2 uppercase tracking-wide"
+          >
+            {link.label}
+          </a>
+        ))}
+      </nav>
+
+      <div class="flex items-center gap-4">
+        {/* MOBILE MENU BUTTON */}
+        <button 
+          id="mobile-menu-btn"
+          class="md:hidden relative z-50 p-2 text-gray-400 hover:text-white transition-colors focus:outline-none"
+          aria-label="Avaa valikko"
+        >
+          {/* Menu icon (hamburger) */}
+          <svg id="menu-icon" class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
+          {/* Close icon (X) */}
+          <svg id="close-icon" class="w-8 h-8 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  {/* MOBILE MENU OVERLAY - KORJATTU TAUSTAVÄRI */}
+  {/* Lisätty 'bg-[#0B0F19]' ja varmistettu että se peittää valkoisen taustan */}
+  <div 
+    id="mobile-menu" 
+    class="fixed inset-0 z-40 bg-[#0B0F19] w-full h-screen transform translate-x-full transition-transform duration-300 md:hidden flex flex-col pt-24 px-8 overflow-y-auto"
+  >
+    <div class="flex flex-col space-y-6">
+      {navLinks.map((link) => (
+        <a 
+          href={link.href}
+          class="text-2xl font-bold border-b border-white/5 pb-4 text-white hover:text-gold-400"
+        >
+          {link.label}
+        </a>
+      ))}
+    </div>
+  </div>
+</header>
+
+<script>
+  const btn = document.getElementById('mobile-menu-btn');
+  const menu = document.getElementById('mobile-menu');
+  const menuIcon = document.getElementById('menu-icon');
+  const closeIcon = document.getElementById('close-icon');
+  const body = document.body;
+  
+  let isMenuOpen = false;
+
+  const toggleMenu = (open: boolean) => {
+    isMenuOpen = open;
+    if (isMenuOpen) {
+      menu?.classList.remove('translate-x-full');
+      body.style.overflow = 'hidden'; // Estä taustan skrollaus
+      menuIcon?.classList.add('hidden');
+      closeIcon?.classList.remove('hidden');
+    } else {
+      menu?.classList.add('translate-x-full');
+      body.style.overflow = '';
+      menuIcon?.classList.remove('hidden');
+      closeIcon?.classList.add('hidden');
+    }
+  };
+
+  btn?.addEventListener('click', () => toggleMenu(!isMenuOpen));
+
+  const links = menu?.querySelectorAll('a');
+  links?.forEach(link => {
+    link.addEventListener('click', () => toggleMenu(false));
+  });
+</script>
