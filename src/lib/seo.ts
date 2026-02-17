@@ -9,7 +9,6 @@ export function generateIndexSchema(spotPrice: number, price14k: string) {
         "@type": "Organization",
         "name": "Kultalaskuri.fi",
         "url": "https://kultalaskuri.fi",
-        // "logo": "https://kultalaskuri.fi/logo.png", // Kommentoitu pois, palauta jos lisäät logon
         "description": "Suomen kattavin kultalaskuri reaaliaikaisella pörssikurssilla.",
         "sameAs": []
       },
@@ -62,7 +61,7 @@ export function generateIndexSchema(spotPrice: number, price14k: string) {
             "name": "Paljonko on kullan hinta grammalta?",
             "acceptedAnswer": {
               "@type": "Answer",
-              "text": `Kullan hinta grammalta vaihtelee pörssikurssin mukaan. Juuri nyt puhtaan kullan (24K) markkinahinta on noin ${spotPrice.toFixed(2)} €/g. Yleisin korukulta Suomessa on 14 karaatin (585) kultaa, jonka arvo romukultana on noin ${price14k} €/g.`
+              "text": `Kullan hinta grammalta vaihtelee pörssikurssin mukaan. Juuri nyt puhtaan kullan (24K) markkinahinta on noin ${spotPrice.toFixed(2)} €/g.`
             }
           },
           {
