@@ -1,30 +1,56 @@
 // src/lib/seo.ts
 
 export function generateIndexSchema(spotPrice: number, price14k: string) {
+  // Tarkistetaan onko hinta validi, mutta EI lopeteta toimintaa jos ei ole.
+  // Jos hinta puuttuu, käytetään geneeristä tekstiä.
+  const isValidPrice = spotPrice && spotPrice > 0;
+
+  const priceText24k = isValidPrice 
+    ? `Juuri nyt puhtaan kullan (24K) markkinahinta on noin ${spotPrice.toFixed(2)} €/g.` 
+    : "Tarkista ajantasainen kullan hinta sivustomme laskurista.";
+
+  const priceText14k = isValidPrice
+    ? `14K (leima 585) on Suomen yleisin korukulta. Tänään sen laskennallinen markkinahinta on n. ${price14k} €/g.`
+    : "14K (leima 585) on Suomen yleisin korukulta. Sen arvo määräytyy päivän pörssikurssin mukaan.";
+
   return JSON.stringify({
     "@context": "https://schema.org",
     "@graph": [
       // 1. Organisaatio
       {
         "@type": "Organization",
+        "@id": "https://kultalaskuri.fi/#organization",
         "name": "Kultalaskuri.fi",
         "url": "https://kultalaskuri.fi",
-        "description": "Suomen kattavin kultalaskuri reaaliaikaisella pörssikurssilla.",
-        "sameAs": []
+        "logo": "https://kultalaskuri.fi/kultalaskuri-logo.png",
+        "description": "Suomen kattavin kultalaskuri reaaliaikaisella pörssikurssilla."
       },
 
-      // 2. WebSite 
+      // 2. WebSite
       {
         "@type": "WebSite",
+        "@id": "https://kultalaskuri.fi/#website",
         "name": "Kultalaskuri.fi",
         "url": "https://kultalaskuri.fi",
-        "description": "Laske kullan arvo reaaliaikaisesti. Ilmainen kultalaskuri ja ajantasainen pörssihinta.",
+        "description": "Laske kullan arvo reaaliaikaisesti.",
+        "publisher": { "@id": "https://kultalaskuri.fi/#organization" },
         "inLanguage": "fi-FI"
       },
 
-      // 3. WebApplication 
+      // 3. WebPage (Tämä sivu) - Linkittää kaiken yhteen
+      {
+        "@type": "WebPage",
+        "@id": "https://kultalaskuri.fi/#webpage",
+        "url": "https://kultalaskuri.fi",
+        "name": "Kullan hinta tänään – Laske kultasi arvo",
+        "isPartOf": { "@id": "https://kultalaskuri.fi/#website" },
+        "mainEntity": { "@id": "https://kultalaskuri.fi/#app" }
+      },
+
+      // 4. WebApplication (Itse sovellus)
       {
         "@type": "WebApplication",
+        "@id": "https://kultalaskuri.fi/#app",
         "name": "Kultalaskuri",
         "url": "https://kultalaskuri.fi",
         "applicationCategory": "FinanceApplication",
@@ -34,34 +60,28 @@ export function generateIndexSchema(spotPrice: number, price14k: string) {
         "offers": {
           "@type": "Offer",
           "price": "0",
-          "priceCurrency": "EUR"
+          "priceCurrency": "EUR",
+          "availability": "https://schema.org/InStock"
         },
-        "featureList": "Kullan hinnan laskeminen, Karattipitoisuuksien vertailu, Reaaliaikainen markkinadata"
-      },
-
-      // 4. BreadcrumbList
-      {
-        "@type": "BreadcrumbList",
-        "itemListElement": [
-          {
-            "@type": "ListItem",
-            "position": 1,
-            "name": "Etusivu",
-            "item": "https://kultalaskuri.fi"
-          }
+        "featureList": [
+          "Kullan hinnan laskeminen",
+          "Karaattipitoisuuksien vertailu",
+          "Reaaliaikainen markkinadata"
         ]
       },
 
       // 5. FAQPage
       {
         "@type": "FAQPage",
+        "@id": "https://kultalaskuri.fi/#faq",
+        "isPartOf": { "@id": "https://kultalaskuri.fi/#webpage" },
         "mainEntity": [
           {
             "@type": "Question",
             "name": "Paljonko on kullan hinta grammalta?",
             "acceptedAnswer": {
               "@type": "Answer",
-              "text": `Kullan hinta grammalta vaihtelee pörssikurssin mukaan. Juuri nyt puhtaan kullan (24K) markkinahinta on noin ${spotPrice.toFixed(2)} €/g.`
+              "text": priceText24k
             }
           },
           {
@@ -69,7 +89,7 @@ export function generateIndexSchema(spotPrice: number, price14k: string) {
             "name": "Mitä eroa on 14K ja 18K kullalla?",
             "acceptedAnswer": {
               "@type": "Answer",
-              "text": "Ero on kultapitoisuudessa. 14K (leima 585) sisältää 58,5 % puhdasta kultaa ja on kovempaa, mikä tekee siitä Suomen yleisimmän korumateriaalin. 18K (leima 750) sisältää 75 % kultaa; se on arvokkaampaa ja väriltään syvemmän keltaista, mutta pehmeämpänä se naarmuuntuu helpommin."
+              "text": `Ero on kultapitoisuudessa. ${priceText14k} 18K (leima 750) sisältää 75 % kultaa ja on arvokkaampaa.`
             }
           },
           {
@@ -77,7 +97,7 @@ export function generateIndexSchema(spotPrice: number, price14k: string) {
             "name": "Mitä tarkoittaa leima 585?",
             "acceptedAnswer": {
               "@type": "Answer",
-              "text": "Leima 585 tarkoittaa 14 karaatin kultaa. Luku kertoo, että seoksesta 585 tuhannesosaa (eli 58,5 %) on puhdasta kultaa. Loput ovat seosmetalleja, kuten kuparia ja hopeaa, jotka tekevät korusta kestävämmän."
+              "text": "Leima 585 tarkoittaa 14 karaatin kultaa. Luku kertoo, että seoksesta 585 tuhannesosaa (eli 58,5 %) on puhdasta kultaa."
             }
           },
           {
@@ -85,7 +105,7 @@ export function generateIndexSchema(spotPrice: number, price14k: string) {
             "name": "Paljonko kultasormus tai ketju painaa?",
             "acceptedAnswer": {
               "@type": "Answer",
-              "text": "Korujen paino vaihtelee suuresti. Kevyt naisten sormus painaa tyypillisesti 2–4 grammaa, kun taas tukevampi miesten sormus voi painaa 5–10 grammaa. Ohut kaulaketju voi olla alle 3 grammaa, mutta paksut panssariketjut voivat painaa kymmeniä grammoja."
+              "text": "Korujen paino vaihtelee suuresti. Kevyt naisten sormus painaa tyypillisesti 2–4 grammaa, miesten sormus 5–10 grammaa."
             }
           },
           {
@@ -93,7 +113,7 @@ export function generateIndexSchema(spotPrice: number, price14k: string) {
             "name": "Onko kultakoruissa aina leima?",
             "acceptedAnswer": {
               "@type": "Answer",
-              "text": "Suomessa myytävissä, yli 1 gramman painoisissa kultatuotteissa tulee lain mukaan olla pitoisuusleima. Hyvin vanhoissa koruissa, ulkomailta tuoduissa esineissä tai itse tehdyissä töissä leima voi kuitenkin puuttua tai se on voinut kulua näkymättömiin."
+              "text": "Suomessa myytävissä, yli 1 gramman painoisissa kultatuotteissa tulee lain mukaan olla pitoisuusleima. Vanhoissa koruissa leima voi puuttua."
             }
           },
           {
@@ -101,7 +121,7 @@ export function generateIndexSchema(spotPrice: number, price14k: string) {
             "name": "Mistä tietää onko esine kultaa vai kullattu?",
             "acceptedAnswer": {
               "@type": "Answer",
-              "text": "Varmin keino on etsiä leimat (esim. 585 tai 750). Toinen kotikonsti on magneetti: aito kulta ei ole magneettista. Jos koru tarttuu magneettiin, se on todennäköisesti kullattua rautaa. Myös kuluneet kohdat, joista paistaa toinen väri läpi, paljastavat esineen olevan vain kullattu."
+              "text": "Varmin keino on etsiä leimat (esim. 585 tai 750). Toinen kotikonsti on magneetti: aito kulta ei ole magneettista."
             }
           },
           {
@@ -109,7 +129,7 @@ export function generateIndexSchema(spotPrice: number, price14k: string) {
             "name": "Kannattaako kulta myydä juuri nyt?",
             "acceptedAnswer": {
               "@type": "Answer",
-              "text": "Kullan hinta on historiallisesti erittäin korkealla tasolla. Jos sinulla on tarpeettomia koruja, rikkinäistä kultaa tai parittomia korvakoruja, nykyinen markkinatilanne on myyjän kannalta erinomainen."
+              "text": "Kullan hinta on historiallisesti korkealla tasolla. Nykyinen markkinatilanne on myyjän kannalta erinomainen."
             }
           },
           {
@@ -117,7 +137,7 @@ export function generateIndexSchema(spotPrice: number, price14k: string) {
             "name": "Miten kullan maailmanmarkkinahinta määräytyy?",
             "acceptedAnswer": {
               "@type": "Answer",
-              "text": "Kullan hinta (spot-hinta) määräytyy kansainvälisissä pörsseissä kysynnän ja tarjonnan mukaan. Siihen vaikuttavat maailmantalouden tilanne, dollarin kurssi, inflaatio ja geopoliittinen epävarmuus. Kultalaskuri.fi seuraa tätä hintaa reaaliajassa."
+              "text": "Kullan hinta (spot-hinta) määräytyy kansainvälisissä pörsseissä kysynnän ja tarjonnan mukaan. Kultalaskuri.fi seuraa tätä hintaa reaaliajassa."
             }
           }
         ]
