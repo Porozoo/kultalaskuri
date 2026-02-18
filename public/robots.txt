@@ -2,8 +2,6 @@
 
 User-agent: *
 Allow: /
-
-# 
 Disallow: /api/
 
 Sitemap: https://kultalaskuri.fi/sitemap.xml
