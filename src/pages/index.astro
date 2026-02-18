@@ -9,7 +9,13 @@ import { generateIndexSchema } from '../lib/seo';
 const goldPrice = await getGoldPrice();
 
 const updatedAtFormatted = goldPrice 
-  ? goldPrice.updatedAt.toLocaleString('fi-FI', { day: 'numeric', month: 'numeric', hour: '2-digit', minute: '2-digit' })
+  ? goldPrice.updatedAt.toLocaleString('fi-FI', { 
+      timeZone: 'Europe/Helsinki', 
+      day: 'numeric', 
+      month: 'numeric', 
+      hour: '2-digit', 
+      minute: '2-digit' 
+    })
   : '';
 
 

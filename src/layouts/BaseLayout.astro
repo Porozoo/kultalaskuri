@@ -16,7 +16,8 @@ const {
   description, 
   canonical = 'https://kultalaskuri.fi/',
   schema,
-  ogImage = 'https://kultalaskuri.fi/og-image.jpg' // Varmista että tämä kuva on public-kansiossa!
+  // KORJAUS 1: Oletuskuvaksi asetettu sinun uusi logosi
+  ogImage = 'https://kultalaskuri.fi/kultalaskuri-logo.png' 
 } = Astro.props;
 
 const siteName = 'Kultalaskuri.fi';
@@ -56,7 +57,9 @@ const siteName = 'Kultalaskuri.fi';
     
     <meta name="generator" content={Astro.generator} />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    
+    <link rel="apple-touch-icon" href="/kultalaskuri-logo.png" />
+    
     <meta name="theme-color" content="#0B0F19" />
     
     <link rel="preconnect" href="https://fonts.googleapis.com" />
