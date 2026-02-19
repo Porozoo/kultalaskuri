@@ -2,8 +2,8 @@
 
 export const GOLD_PURITIES = {
   '24K': { label: '24K (99.9%)', decimal: 0.999, description: 'Puhdas kulta', targetPercent: 0.90 },
-  '22K': { label: '22K (91.7%)', decimal: 0.917, description: 'Sijoituskolikot', targetPercent: 0.80 },
-  '21K': { label: '21K (87.5%)', decimal: 0.875, description: 'Lähi-idän korut', targetPercent: 0.80 },
+  '22K': { label: '22K (91.7%)', decimal: 0.917, description: 'Sijoituskolikot', targetPercent: 0.81 },
+  '21K': { label: '21K (87.5%)', decimal: 0.875, description: 'Lähi-idän korut', targetPercent: 0.81 },
   '18K': { label: '18K (75.0%)', decimal: 0.750, description: 'Laadukkaat korut', targetPercent: 0.81 },
   '14K': { label: '14K (58.5%)', decimal: 0.585, description: 'Yleisin Suomessa', targetPercent: 0.81 },
   '10K': { label: '10K (41.7%)', decimal: 0.417, description: 'USA:n standardi', targetPercent: 0.78 },
