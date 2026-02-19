@@ -1,19 +1,20 @@
 // src/lib/calculations/goldCalculator.ts
 
 export const GOLD_PURITIES = {
-  '24K': { label: '24K (99.9%)', decimal: 0.999, description: 'Puhdas kulta' },
-  '22K': { label: '22K (91.7%)', decimal: 0.917, description: 'Sijoituskolikot' },
-  '21K': { label: '21K (87.5%)', decimal: 0.875, description: 'Lähi-idän korut' },
-  '18K': { label: '18K (75.0%)', decimal: 0.750, description: 'Laadukkaat korut' },
-  '14K': { label: '14K (58.5%)', decimal: 0.585, description: 'Yleisin Suomessa' },
-  '10K': { label: '10K (41.7%)', decimal: 0.417, description: 'USA:n standardi' },
-  '9K':  { label: '9K (37.5%)',  decimal: 0.375, description: 'Arkikorut' },
-  '8K':  { label: '8K (33.3%)',  decimal: 0.333, description: 'Minimi EU:ssa' },
+  '24K': { label: '24K (99.9%)', decimal: 0.999, description: 'Puhdas kulta', targetPercent: 0.90 },
+  '22K': { label: '22K (91.7%)', decimal: 0.917, description: 'Sijoituskolikot', targetPercent: 0.80 },
+  '21K': { label: '21K (87.5%)', decimal: 0.875, description: 'Lähi-idän korut', targetPercent: 0.80 },
+  '18K': { label: '18K (75.0%)', decimal: 0.750, description: 'Laadukkaat korut', targetPercent: 0.81 },
+  '14K': { label: '14K (58.5%)', decimal: 0.585, description: 'Yleisin Suomessa', targetPercent: 0.81 },
+  '10K': { label: '10K (41.7%)', decimal: 0.417, description: 'USA:n standardi', targetPercent: 0.78 },
+  '9K':  { label: '9K (37.5%)',  decimal: 0.375, description: 'Arkikorut', targetPercent: 0.78 },
+  '8K':  { label: '8K (33.3%)',  decimal: 0.333, description: 'Minimi EU:ssa', targetPercent: 0.75 },
 } as const;
 
 export type PurityCode = keyof typeof GOLD_PURITIES;
 
-// Määritellään vain Spot ja Tavoitehinta
+// Jätetään tämä ennalleen "hämäykseksi" Reactille, jotta se ei kaadu, 
+// jos se yrittää lukea percent-arvoa jostain taustalla.
 export const PRICE_TIERS = {
   spot: { 
     percent: 1.00, 
@@ -21,7 +22,7 @@ export const PRICE_TIERS = {
     description: 'Teoreettinen maksimi (100%)' 
   },
   target: { 
-    percent: 0.80, // Tavoitehinta (n. 80% pörssistä on hyvä nyrkkisääntö)
+    percent: 0.80, 
     label: 'Tavoitehinta', 
     description: 'Reilu markkinahinta' 
   }
@@ -64,7 +65,8 @@ export function calculateGoldValue(
     
     // Pyöristetään luvut kahteen desimaaliin
     spotValue: Number(spotValue.toFixed(2)),
-    targetValue: Number((spotValue * PRICE_TIERS.target.percent).toFixed(2)),
+    // LASKENTA KORJATTU: Laskuri käyttää nyt kunkin karaatin omaa targetPercent-arvoa!
+    targetValue: Number((spotValue * purity.targetPercent).toFixed(2)),
   };
 }
 
