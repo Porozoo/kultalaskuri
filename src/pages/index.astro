@@ -5,22 +5,8 @@ import GoldCalculator from '../components/react/GoldCalculator.tsx';
 import JewelryWeightEstimator from '../components/react/JewelryWeightEstimator.tsx';
 import { generateIndexSchema } from '../lib/seo';
 
-
 const goldPrice = await getGoldPrice();
-
-const updatedAtFormatted = goldPrice 
-  ? goldPrice.updatedAt.toLocaleString('fi-FI', { 
-      timeZone: 'Europe/Helsinki', 
-      day: 'numeric', 
-      month: 'numeric', 
-      hour: '2-digit', 
-      minute: '2-digit' 
-    })
-  : '';
-
-
 const spot = goldPrice?.priceEurGram || 0;
-
 
 const prices = {
   k24: (spot * 0.999 * 0.65).toFixed(2),
@@ -28,7 +14,6 @@ const prices = {
   k14: (spot * 0.585 * 0.65).toFixed(2),
   kilo: (spot * 1000).toLocaleString('fi-FI', { maximumFractionDigits: 0 }) 
 };
-
 
 const schemaData = generateIndexSchema(spot, prices.k14);
 ---
@@ -58,8 +43,10 @@ const schemaData = generateIndexSchema(spot, prices.k14);
             {spot.toFixed(2)} €/g <span class="text-xs text-gray-400 font-normal">(24K)</span>
           </span>
         </div>
-        <span class="text-[10px] text-gray-500 uppercase tracking-widest">
-          Päivitetty: {updatedAtFormatted}
+        
+        <span class="text-[10px] text-gray-400 uppercase tracking-widest flex items-center gap-1.5 mt-1">
+          <span class="inline-block w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse shadow-[0_0_5px_rgba(34,197,94,0.5)]"></span>
+          Reaaliaikainen pörssikurssi
         </span>
       </div>
 
@@ -85,7 +72,6 @@ const schemaData = generateIndexSchema(spot, prices.k14);
           <GoldCalculator 
             client:visible 
             spotPriceEurPerGram={goldPrice.priceEurGram} 
-            updatedAt={updatedAtFormatted} 
           />
         ) : (
           <div class="text-center p-12">
@@ -345,7 +331,6 @@ const schemaData = generateIndexSchema(spot, prices.k14);
   </button>
 
   <script>
-    
     function checkDetailsState() {
       const details = document.querySelectorAll('details');
       if (window.innerWidth >= 768) {
@@ -355,15 +340,10 @@ const schemaData = generateIndexSchema(spot, prices.k14);
       }
     }
 
-    
     checkDetailsState();
-
-    
     window.addEventListener('resize', checkDetailsState);
 
-    
     const scrollBtn = document.getElementById('scroll-to-top');
-    
     
     window.addEventListener('scroll', () => {
       if (window.scrollY > 300) {
@@ -373,12 +353,10 @@ const schemaData = generateIndexSchema(spot, prices.k14);
       }
     });
 
-    
     scrollBtn?.addEventListener('click', () => {
       window.scrollTo({ top: 0, behavior: 'smooth' });
     });
 
-    
     const observer = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
         if (entry.isIntersecting) entry.target.classList.add('active');

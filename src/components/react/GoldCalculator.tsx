@@ -4,10 +4,9 @@ import { calculateGoldValue, formatEur, GOLD_PURITIES, type PurityCode, type Cal
 
 interface Props {
   spotPriceEurPerGram: number;
-  updatedAt: string;
 }
 
-export default function GoldCalculator({ spotPriceEurPerGram, updatedAt }: Props) {
+export default function GoldCalculator({ spotPriceEurPerGram }: Props) {
   const [weight, setWeight] = useState<string>('');
   const [purity, setPurity] = useState<PurityCode>('14K');
   const [result, setResult] = useState<CalculationResult | null>(null);
