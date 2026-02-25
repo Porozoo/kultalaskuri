@@ -1,62 +1,139 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import GoldChart from '../components/react/GoldChart.tsx';
 import { getGoldPrice } from '../lib/api/metalPriceApi';
 import GoldCalculator from '../components/react/GoldCalculator.tsx';
 import JewelryWeightEstimator from '../components/react/JewelryWeightEstimator.tsx';
 import { generateIndexSchema } from '../lib/seo';
+import { calculateGoldValue } from '../lib/calculations/goldCalculator';
+import PriceCard from '../components/PriceCard.astro';
+import FaqItem from '../components/FaqItem.astro';
 
+// ── Hintatiedot ──
 const goldPrice = await getGoldPrice();
 const spot = goldPrice?.priceEurGram || 0;
 
-const prices = {
-  k24: (spot * 0.999 * 0.65).toFixed(2),
-  k18: (spot * 0.750 * 0.65).toFixed(2),
-  k14: (spot * 0.585 * 0.65).toFixed(2),
-  kilo: (spot * 1000).toLocaleString('fi-FI', { maximumFractionDigits: 0 }) 
-};
+const result24k = spot > 0 ? calculateGoldValue(1, '24K', spot) : null;
+const result18k = spot > 0 ? calculateGoldValue(1, '18K', spot) : null;
+const result14k = spot > 0 ? calculateGoldValue(1, '14K', spot) : null;
 
-const schemaData = generateIndexSchema(spot, prices.k14);
+const p24k = result24k?.targetValue ?? 0;
+const p18k = result18k?.targetValue ?? 0;
+const p14k = result14k?.targetValue ?? 0;
+
+const schemaData = generateIndexSchema(spot, p14k.toFixed(2));
+
+// ── Data-taulukot toistorakenteita varten ──
+
+const priceCards = [
+  { karat: '14K', purity: 585, label: 'Suomen yleisin', price: p14k, isHighlighted: true },
+  { karat: '18K', purity: 750, label: 'Arvokorut', price: p18k },
+  { karat: '24K', purity: 999, label: 'Puhdas kulta', price: p24k },
+];
+
+const benefitCards = [
+  { 
+    icon: '📊', 
+    iconLabel: 'Tilastokuvake',
+    title: 'Tiedä oikea markkinahinta', 
+    text: 'Kullan hinta muuttuu joka päivä. Kun tiedät ajantasaisen <span class="font-semibold text-gold-600">pörssikurssin</span>, olet vahvemmassa asemassa neuvotteluissa kullanostajien kanssa. Älä myy sokkona.'
+  },
+  { 
+    icon: '⚖️', 
+    iconLabel: 'Vaaka',
+    title: 'Tunnista arvoesineet', 
+    text: 'Kaikki kulta ei ole samanarvoista. 18 karaatin vihkisormus on arvokkaampi kuin 14 karaatin ketju. Laskurimme auttaa sinua hahmottamaan eri pitoisuuksien hintaerot.'
+  },
+  { 
+    icon: '💡', 
+    iconLabel: 'Vinkkilamppu',
+    title: 'Kilpailuttaminen kannattaa', 
+    text: 'Ostajien hinnoissa on eroja. Kun olet laskenut esineesi suuntaa-antavan arvon laskurillamme, tiedät onko saamasi tarjous reilu vai kannattaako kysyä hintaa muualta.'
+  },
+];
+
+const stampCards = [
+  { purity: '585', karat: '14 Karaattia', desc: 'Suomen yleisin korukulta. Sisältää 58,5% puhdasta kultaa.' },
+  { purity: '750', karat: '18 Karaattia', desc: 'Arvokorut ja vihkisormukset. Sisältää 75% puhdasta kultaa.' },
+  { purity: '999', karat: '24 Karaattia', desc: 'Puhdas sijoituskulta, kuten kultaharkot ja kolikot.' },
+];
+
+const faqItems = [
+  { 
+    question: 'Paljonko on kullan hinta grammalta?', 
+    answer: `Kullan hinta grammalta vaihtelee pörssikurssin mukaan. Juuri nyt puhtaan kullan (24K) markkinahinta on noin <strong>${spot.toFixed(2)} €/g</strong>.`
+  },
+  { 
+    question: 'Mitä eroa on 14K ja 18K kullalla?', 
+    answer: 'Ero on kultapitoisuudessa. 14K (leima 585) sisältää 58,5 % puhdasta kultaa ja on kovempaa, mikä tekee siitä Suomen yleisimmän korumateriaalin. 18K (leima 750) sisältää 75 % kultaa; se on arvokkaampaa ja väriltään syvemmän keltaista, mutta pehmeämpänä se naarmuuntuu helpommin.'
+  },
+  { 
+    question: 'Mitä tarkoittaa leima 585?', 
+    answer: 'Leima 585 tarkoittaa 14 karaatin kultaa. Luku kertoo, että seoksesta 585 tuhannesosaa (eli 58,5 %) on puhdasta kultaa. Loput ovat seosmetalleja, kuten kuparia ja hopeaa, jotka tekevät korusta kestävämmän.'
+  },
+  { 
+    question: 'Paljonko kultasormus tai ketju painaa?', 
+    answer: 'Korujen paino vaihtelee suuresti. Kevyt naisten sormus painaa tyypillisesti 2–4 grammaa, kun taas tukevampi miesten sormus voi painaa 5–10 grammaa. Ohut kaulaketju voi olla alle 3 grammaa, mutta paksut panssariketjut voivat painaa kymmeniä grammoja.'
+  },
+  { 
+    question: 'Onko kultakoruissa aina leima?', 
+    answer: 'Suomessa myytävissä, yli 1 gramman painoisissa kultatuotteissa tulee lain mukaan olla pitoisuusleima. Hyvin vanhoissa koruissa, ulkomailta tuoduissa esineissä tai itse tehdyissä töissä leima voi kuitenkin puuttua tai se on voinut kulua näkymättömiin.'
+  },
+  { 
+    question: 'Mistä tietää onko esine kultaa vai kullattu?', 
+    answer: 'Varmin keino on etsiä leimat (esim. 585 tai 750). Toinen kotikonsti on magneetti: aito kulta ei ole magneettista. Jos koru tarttuu magneettiin, se on todennäköisesti kullattua rautaa. Myös kuluneet kohdat, joista paistaa toinen väri läpi, paljastavat esineen olevan vain kullattu.'
+  },
+  { 
+    question: 'Kannattaako kulta myydä juuri nyt?', 
+    answer: 'Kullan hinta on historiallisesti erittäin korkealla tasolla. Jos sinulla on tarpeettomia koruja, rikkinäistä kultaa tai parittomia korvakoruja, nykyinen markkinatilanne on myyjän kannalta erinomainen.'
+  },
+  { 
+    question: 'Miten kullan maailmanmarkkinahinta määräytyy?', 
+    answer: 'Kullan hinta (spot-hinta) määräytyy kansainvälisissä pörsseissä kysynnän ja tarjonnan mukaan. Siihen vaikuttavat maailmantalouden tilanne, dollarin kurssi, inflaatio ja geopoliittinen epävarmuus. Kultalaskuri.fi seuraa tätä hintaa reaaliajassa.'
+  },
+];
 ---
 
 <BaseLayout 
   title="Kullan hinta tänään – Laske kultasi arvo | Kultalaskuri.fi" 
-  description={`Tarkista kullan hinta tänään reaaliajassa. Ilmainen ja puolueeton kultalaskuri näyttää kultakorujesi ja romukullan tarkan arvon helposti ja nopeasti.`}
+  description="Tarkista kullan hinta tänään reaaliajassa. Ilmainen ja puolueeton kultalaskuri näyttää kultakorujesi ja romukullan tarkan arvon helposti ja nopeasti."
   schema={schemaData}
 >
-  
+
+  <!-- ════════════════════════════════════════════ -->
+  <!-- HERO                                        -->
+  <!-- ════════════════════════════════════════════ -->
   <div class="relative bg-[#0B0F19] pt-32 pb-48 px-4 overflow-hidden">
     <div class="absolute inset-0 overflow-hidden pointer-events-none">
-       <div class="absolute top-0 left-1/4 w-96 h-96 bg-gold-400/20 rounded-full mix-blend-screen filter blur-[100px] animate-blob"></div>
-       <div class="absolute top-10 right-1/4 w-96 h-96 bg-blue-600/20 rounded-full mix-blend-screen filter blur-[100px] animate-blob animation-delay-2000"></div>
+      <div class="absolute top-0 left-1/4 w-96 h-96 bg-gold-400/20 rounded-full mix-blend-screen filter blur-[100px] animate-blob"></div>
+      <div class="absolute top-10 right-1/4 w-96 h-96 bg-blue-600/20 rounded-full mix-blend-screen filter blur-[100px] animate-blob animation-delay-2000"></div>
     </div>
 
     <div class="max-w-4xl mx-auto text-center relative z-10 reveal active">
-      
       <div class="flex flex-col items-center gap-2 mb-8">
-  <div class="inline-flex items-center gap-3 px-4 py-2 rounded-full bg-white/10 border border-white/10 backdrop-blur-md shadow-lg">
-    <span class="relative flex h-2.5 w-2.5">
-      <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-      <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-green-500"></span>
-    </span>
-    <span class="text-white font-bold tracking-wide text-sm md:text-base">
-      <span class="text-gold-200 font-normal mr-1">Kullan hinta tänään:</span> 
-      {spot.toFixed(2)} €/g <span class="text-xs text-gray-400 font-normal">(24K)</span>
-    </span>
-  </div>
-  
-  <div class="flex flex-col items-center gap-1">
-    <span class="text-[10px] text-gray-400 uppercase tracking-widest">
-      Reaaliaikainen pörssikurssi
-    </span>
-    <span class="text-[9px] text-gray-500/80 italic">
-      Lähde: Metalprice API
-    </span>
-  </div>
-</div>
+        <div class="inline-flex items-center gap-3 px-4 py-2 rounded-full bg-white/10 border border-white/10 backdrop-blur-md shadow-lg">
+          <span class="relative flex h-2.5 w-2.5">
+            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+            <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-green-500"></span>
+          </span>
+          <span class="text-white font-bold tracking-wide text-sm md:text-base">
+            <span class="text-gold-200 font-normal mr-1">Kullan hinta tänään:</span>
+            {spot > 0 ? (
+              <>{spot.toFixed(2)} €/g <span class="text-xs text-gray-400 font-normal">(24K)</span></>
+            ) : (
+              <span class="text-yellow-400">Päivitetään...</span>
+            )}
+          </span>
+        </div>
+        <div class="flex flex-col items-center gap-1">
+          <span class="text-[10px] text-gray-400 uppercase tracking-widest">Reaaliaikainen pörssikurssi</span>
+          <span class="text-[9px] text-gray-500/80 italic">Lähde: Metalprice API</span>
+        </div>
+      </div>
 
       <h1 class="text-5xl md:text-7xl font-black text-white mb-6 leading-tight">
-        Kullan hinta tänään - <br/>
-        <span class="text-transparent bg-clip-text bg-gradient-to-r from-gold-200 via-gold-400 to-gold-600">
+        Kullan hinta tänään - 
+        <span class="block text-transparent bg-clip-text bg-gradient-to-r from-gold-200 via-gold-400 to-gold-600">
           Laske kultasi arvo
         </span>
       </h1>
@@ -65,90 +142,120 @@ const schemaData = generateIndexSchema(spot, prices.k14);
         Selvitä paljonko saat, kun muutat <strong>kultasi rahaksi</strong>. 
         Laskurimme hakee reaaliaikaisen pörssikurssin ja laskee koruillesi tarkan <strong>grammahinnan</strong> pitoisuuden mukaan.
       </p>
-
     </div>
   </div>
 
+  <!-- ════════════════════════════════════════════ -->
+  <!-- LASKURI + HINTATAULUKKO                     -->
+  <!-- ════════════════════════════════════════════ -->
   <div id="laskuri" class="relative z-20 -mt-24 px-4 pb-12">
     <div class="max-w-5xl mx-auto reveal delay-200">
+      
       <div class="bg-white rounded-[2rem] shadow-[0_25px_50px_-12px_rgba(0,0,0,0.25)] border border-gray-100 overflow-hidden p-1 md:p-2">
         {goldPrice ? (
-          <GoldCalculator 
-            client:visible 
-            spotPriceEurPerGram={goldPrice.priceEurGram} 
-          />
+          <GoldCalculator client:visible spotPriceEurPerGram={goldPrice.priceEurGram} />
         ) : (
           <div class="text-center p-12">
             <p class="text-red-500">Hintatietoja ei saatavilla.</p>
           </div>
         )}
       </div>
-      
-      <div class="mt-8 text-center max-w-3xl mx-auto">
-        <p class="text-sm text-gray-500 flex items-center justify-center gap-2 mb-4">
-          <svg class="w-4 h-4 text-gold-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd" /></svg>
-          <span>Laskuri käyttää <strong class="text-gray-700">reaaliaikaista markkinadataa</strong>.</span>
-        </p>
-        <p class="text-gray-600 leading-relaxed text-sm">
-          Yllä oleva laskuri auttaa sinua arvioimaan kultaesineidesi arvon. 
-          Syötä esineen paino ja valitse karaattimäärä (leima), niin näet arvion markkinahinnasta.
-        </p>
+
+      <div class="mt-16">
+        <div class="text-center mb-10">
+          <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-green-50 text-green-700 text-[10px] md:text-xs font-bold uppercase tracking-wide mb-4 border border-green-100 shadow-sm">
+            <span class="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span>
+            Päivitetty automaattisesti
+          </div>
+          <h2 class="text-3xl md:text-4xl font-black text-gray-900 mb-4 tracking-tight">Arvioidut myyntihinnat</h2>
+          <p class="text-gray-500 text-sm md:text-base max-w-2xl mx-auto leading-relaxed">
+            Alla näet realistiset <strong class="text-gray-700">tavoitehinnat</strong> yleisimmille kultapitoisuuksille. 
+            Hinnat edustavat reilua markkinahintaa, jota luotettavat ostajat maksavat.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {priceCards.map(card => (
+            <PriceCard 
+              karat={card.karat}
+              purity={card.purity}
+              label={card.label}
+              price={card.price}
+              isHighlighted={card.isHighlighted}
+            />
+          ))}
+        </div>
       </div>
     </div>
   </div>
 
+  <!-- ════════════════════════════════════════════ -->
+  <!-- KORUN PAINOARVIO                            -->
+  <!-- ════════════════════════════════════════════ -->
   <section class="py-20 bg-white border-t border-gray-100">
     <div class="max-w-4xl mx-auto px-4">
       <JewelryWeightEstimator client:visible spotPrice={spot} />
     </div>
   </section>
 
-  <section class="py-20 bg-gray-50">
-    <div class="max-w-6xl mx-auto px-4">
-      
+  <!-- ════════════════════════════════════════════ -->
+  <!-- HINTAKEHITYS-GRAAFI                         -->
+  <!-- ════════════════════════════════════════════ -->
+  <section class="py-20 bg-gray-50 border-t border-gray-100">
+    <div class="max-w-5xl mx-auto px-4 reveal">
+      <div class="text-center mb-10">
+        <h2 class="text-3xl md:text-4xl font-black text-gray-900 mb-4 tracking-tight">Kullan hintakehitys</h2>
+        <p class="text-gray-500 text-sm md:text-base max-w-2xl mx-auto leading-relaxed mb-6">
+          Seuraa kullan maailmanmarkkinahinnan kehitystä euroissa. Graafi päivittyy reaaliajassa.
+        </p>
+        <div class="inline-flex items-center gap-2 bg-white px-4 py-2 rounded-lg border border-gray-200 shadow-sm text-sm text-gray-600">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-gold-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="12" y1="16" x2="12" y2="12"></line>
+            <line x1="12" y1="8" x2="12.01" y2="8"></line>
+          </svg>
+          Pörssissä hinta ilmoitetaan <strong>troy-unsseina</strong> (1 unssi = n. 31,1 grammaa).
+        </div>
+      </div>
+      <GoldChart client:visible />
+    </div>
+  </section>
+
+  <!-- ════════════════════════════════════════════ -->
+  <!-- MIKSI LASKEA KULLAN ARVO                    -->
+  <!-- ════════════════════════════════════════════ -->
+  <section class="py-20 bg-white border-t border-gray-100">
+    <div class="max-w-6xl mx-auto px-4 reveal">
       <div class="text-center mb-16">
         <h2 class="text-3xl font-black text-gray-900 mb-4">Miksi kullan arvo kannattaa laskea?</h2>
         <p class="text-gray-500 max-w-2xl mx-auto text-lg">
-          Kullan myynti on kannattavaa, kun tiedät esineidesi todellisen arvon. Laskurimme auttaa sinua ymmärtämään, mistä hinta muodostuu, jotta osaat vaatia oikeaa hintaa.
+          Kullan myynti on kannattavaa, kun tiedät esineidesi todellisen arvon. 
+          Laskurimme auttaa sinua ymmärtämään, mistä hinta muodostuu, jotta osaat vaatia oikeaa hintaa.
         </p>
       </div>
 
       <div class="grid md:grid-cols-3 gap-8 mb-12">
-        <div class="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 hover:border-gold-300 transition-all group">
-          <div class="w-14 h-14 bg-gold-50 rounded-2xl flex items-center justify-center text-3xl mb-6 group-hover:scale-110 transition-transform">
-            📊
+        {benefitCards.map(card => (
+          <div class="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 hover:border-gold-300 transition-all group">
+            <div 
+              class="w-14 h-14 bg-gold-50 rounded-2xl flex items-center justify-center text-3xl mb-6 group-hover:scale-110 transition-transform"
+              role="img" 
+              aria-label={card.iconLabel}
+            >
+              {card.icon}
+            </div>
+            <h3 class="font-bold text-gray-900 text-lg mb-3">{card.title}</h3>
+            <p class="text-sm text-gray-600 leading-relaxed" set:html={card.text} />
           </div>
-          <h3 class="font-bold text-gray-900 text-lg mb-3">Tiedä oikea markkinahinta</h3>
-          <p class="text-sm text-gray-600 leading-relaxed">
-            Kullan hinta muuttuu joka päivä. Kun tiedät ajantasaisen <span class="font-semibold text-gold-600">pörssikurssin</span>, olet vahvemmassa asemassa neuvotteluissa kullanostajien kanssa. Älä myy sokkona.
-          </p>
-        </div>
-
-        <div class="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 hover:border-gold-300 transition-all group">
-          <div class="w-14 h-14 bg-gold-50 rounded-2xl flex items-center justify-center text-3xl mb-6 group-hover:scale-110 transition-transform">
-            ⚖️
-          </div>
-          <h3 class="font-bold text-gray-900 text-lg mb-3">Tunnista arvoesineet</h3>
-          <p class="text-sm text-gray-600 leading-relaxed">
-            Kaikki kulta ei ole samanarvoista. 18 karaatin vihkisormus on arvokkaampi kuin 14 karaatin ketju. Laskurimme auttaa sinua hahmottamaan eri pitoisuuksien hintaerot.
-          </p>
-        </div>
-
-        <div class="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 hover:border-gold-300 transition-all group">
-          <div class="w-14 h-14 bg-gold-50 rounded-2xl flex items-center justify-center text-3xl mb-6 group-hover:scale-110 transition-transform">
-            💡
-          </div>
-          <h3 class="font-bold text-gray-900 text-lg mb-3">Kilpailuttaminen kannattaa</h3>
-          <p class="text-sm text-gray-600 leading-relaxed">
-            Ostajien hinnoissa on eroja. Kun olet laskenut esineesi suuntaa-antavan arvon laskurillamme, tiedät onko saamasi tarjous reilu vai kannattaako kysyä hintaa muualta.
-          </p>
-        </div>
+        ))}
       </div>
-
     </div>
   </section>
 
-  <section id="leimat" class="py-16 bg-white border-t border-gray-100">
+  <!-- ════════════════════════════════════════════ -->
+  <!-- KULTALEIMOJEN TUNNISTUS                     -->
+  <!-- ════════════════════════════════════════════ -->
+  <section id="leimat" class="py-16 bg-gray-50 border-t border-gray-100">
     <div class="max-w-6xl mx-auto px-4">
       <div class="grid md:grid-cols-2 gap-16 items-center">
         
@@ -156,12 +263,14 @@ const schemaData = generateIndexSchema(spot, prices.k14);
           <h2 class="text-3xl font-black text-gray-900 mb-6">Näin tunnistat arvokkaan kullan</h2>
           <div class="space-y-6 text-gray-600 leading-relaxed">
             <p>
-              Kaikki keltainen ei ole kultaa. Ennen myyntiä on hyvä tarkistaa, onko korusi aitoa jalometallia vai vain kullattua metallia. Tärkein tuntomerkki on leima.
+              Kaikki keltainen ei ole kultaa. Ennen myyntiä on hyvä tarkistaa, 
+              onko korusi aitoa jalometallia vai vain kullattua metallia. Tärkein tuntomerkki on leima.
             </p>
             
             <h3 class="text-xl font-bold text-gray-900 mt-8 mb-3">Tunnista kultaleimat (585, 750, 999)</h3>
             <p>
-              Jalometallituotteissa on lähes aina leima, joka kertoo pitoisuuden. Suomessa yleisin leima on <strong>585</strong>, mikä tarkoittaa 14 karaatin kultaa (58,5% puhdasta kultaa).
+              Jalometallituotteissa on lähes aina leima, joka kertoo pitoisuuden. 
+              Suomessa yleisin leima on <strong>585</strong>, mikä tarkoittaa 14 karaatin kultaa (58,5% puhdasta kultaa).
             </p>
             
             <ul class="space-y-3 mt-6">
@@ -190,143 +299,63 @@ const schemaData = generateIndexSchema(spot, prices.k14);
               <div>
                 <h4 class="font-bold text-gray-900 text-sm">Vinkki: Puuttuuko suurennuslasi?</h4>
                 <p class="text-sm text-gray-600 mt-1">
-                  Voit kokeilla ottaa leimasta kuvan puhelimellasi hyvässä valossa. Kun zoomaat valmista kuvaa puhelimen näytöllä, näet pienetkin numerot usein yllättävän tarkasti.
+                  Voit kokeilla ottaa leimasta kuvan puhelimellasi hyvässä valossa. 
+                  Kun zoomaat valmista kuvaa puhelimen näytöllä, näet pienetkin numerot usein yllättävän tarkasti.
                 </p>
               </div>
             </div>
-
           </div>
         </div>
 
         <div class="grid grid-cols-1 gap-6">
-          <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-6 group hover:border-gold-300 transition-colors">
-             <div class="w-16 h-16 bg-gold-50 rounded-full flex items-center justify-center text-gold-600 font-bold text-xl border border-gold-100 shrink-0">
-               585
-             </div>
-             <div>
-               <h4 class="font-bold text-gray-900 text-lg">14 Karaattia</h4>
-               <p class="text-sm text-gray-500">Suomen yleisin korukulta. Sisältää 58,5% puhdasta kultaa.</p>
-             </div>
-          </div>
-
-          <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-6 group hover:border-gold-300 transition-colors">
-             <div class="w-16 h-16 bg-gold-50 rounded-full flex items-center justify-center text-gold-600 font-bold text-xl border border-gold-100 shrink-0">
-               750
-             </div>
-             <div>
-               <h4 class="font-bold text-gray-900 text-lg">18 Karaattia</h4>
-               <p class="text-sm text-gray-500">Arvokorut ja vihkisormukset. Sisältää 75% puhdasta kultaa.</p>
-             </div>
-          </div>
-
-          <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-6 group hover:border-gold-300 transition-colors">
-             <div class="w-16 h-16 bg-gold-50 rounded-full flex items-center justify-center text-gold-600 font-bold text-xl border border-gold-100 shrink-0">
-               999
-             </div>
-             <div>
-               <h4 class="font-bold text-gray-900 text-lg">24 Karaattia</h4>
-               <p class="text-sm text-gray-500">Puhdas sijoituskulta, kuten kultaharkot ja kolikot.</p>
-             </div>
-          </div>
+          {stampCards.map(card => (
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-6 group hover:border-gold-300 transition-colors">
+              <div class="w-16 h-16 bg-gold-50 rounded-full flex items-center justify-center text-gold-600 font-bold text-xl border border-gold-100 shrink-0">
+                {card.purity}
+              </div>
+              <div>
+                <h4 class="font-bold text-gray-900 text-lg">{card.karat}</h4>
+                <p class="text-sm text-gray-500">{card.desc}</p>
+              </div>
+            </div>
+          ))}
         </div>
 
       </div>
     </div>
   </section>
 
-  <section id="ukk" class="py-20 bg-gray-50 border-t border-gray-100">
+  <!-- ════════════════════════════════════════════ -->
+  <!-- UKK (FAQ)                                   -->
+  <!-- ════════════════════════════════════════════ -->
+  <section id="ukk" class="py-20 bg-white border-t border-gray-100">
     <div class="max-w-6xl mx-auto px-4">
-      <h2 class="text-3xl font-black text-center text-gray-900 mb-12">Usein kysyttyä kullan hinnasta</h2>
-      
+      <h2 class="text-3xl font-black text-center text-gray-900 mb-12">
+        Usein kysyttyä kullan hinnasta
+      </h2>
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        
-        <details class="group bg-white p-6 rounded-2xl border border-gray-100 md:open md:pointer-events-none md:shadow-sm md:hover:shadow-md transition-all">
-          <summary class="flex justify-between items-center font-bold text-gray-900 list-none cursor-pointer md:cursor-default">
-            <span>Paljonko on kullan hinta grammalta?</span>
-            <span class="transition group-open:rotate-180 md:hidden">▼</span>
-          </summary>
-          <p class="text-gray-600 mt-4 leading-relaxed text-sm md:text-base">
-            Kullan hinta grammalta vaihtelee pörssikurssin mukaan. Juuri nyt puhtaan kullan (24K) markkinahinta on noin <strong>{spot.toFixed(2)} €/g</strong>.
-          </p>
-        </details>
-
-        <details class="group bg-white p-6 rounded-2xl border border-gray-100 md:open md:pointer-events-none md:shadow-sm md:hover:shadow-md transition-all">
-          <summary class="flex justify-between items-center font-bold text-gray-900 list-none cursor-pointer md:cursor-default">
-            <span>Mitä eroa on 14K ja 18K kullalla?</span>
-            <span class="transition group-open:rotate-180 md:hidden">▼</span>
-          </summary>
-          <p class="text-gray-600 mt-4 leading-relaxed text-sm md:text-base">
-            Ero on kultapitoisuudessa. 14K (leima 585) sisältää 58,5 % puhdasta kultaa ja on kovempaa, mikä tekee siitä Suomen yleisimmän korumateriaalin. 18K (leima 750) sisältää 75 % kultaa; se on arvokkaampaa ja väriltään syvemmän keltaista, mutta pehmeämpänä se naarmuuntuu helpommin.
-          </p>
-        </details>
-
-        <details class="group bg-white p-6 rounded-2xl border border-gray-100 md:open md:pointer-events-none md:shadow-sm md:hover:shadow-md transition-all">
-          <summary class="flex justify-between items-center font-bold text-gray-900 list-none cursor-pointer md:cursor-default">
-            <span>Mitä tarkoittaa leima 585?</span>
-            <span class="transition group-open:rotate-180 md:hidden">▼</span>
-          </summary>
-          <p class="text-gray-600 mt-4 leading-relaxed text-sm md:text-base">
-            Leima 585 tarkoittaa 14 karaatin kultaa. Luku kertoo, että seoksesta 585 tuhannesosaa (eli 58,5 %) on puhdasta kultaa. Loput ovat seosmetalleja, kuten kuparia ja hopeaa, jotka tekevät korusta kestävämmän.
-          </p>
-        </details>
-
-        <details class="group bg-white p-6 rounded-2xl border border-gray-100 md:open md:pointer-events-none md:shadow-sm md:hover:shadow-md transition-all">
-          <summary class="flex justify-between items-center font-bold text-gray-900 list-none cursor-pointer md:cursor-default">
-            <span>Paljonko kultasormus tai ketju painaa?</span>
-            <span class="transition group-open:rotate-180 md:hidden">▼</span>
-          </summary>
-          <p class="text-gray-600 mt-4 leading-relaxed text-sm md:text-base">
-            Korujen paino vaihtelee suuresti. Kevyt naisten sormus painaa tyypillisesti 2–4 grammaa, kun taas tukevampi miesten sormus voi painaa 5–10 grammaa. Ohut kaulaketju voi olla alle 3 grammaa, mutta paksut panssariketjut voivat painaa kymmeniä grammoja.
-          </p>
-        </details>
-
-        <details class="group bg-white p-6 rounded-2xl border border-gray-100 md:open md:pointer-events-none md:shadow-sm md:hover:shadow-md transition-all">
-          <summary class="flex justify-between items-center font-bold text-gray-900 list-none cursor-pointer md:cursor-default">
-            <span>Onko kultakoruissa aina leima?</span>
-            <span class="transition group-open:rotate-180 md:hidden">▼</span>
-          </summary>
-          <p class="text-gray-600 mt-4 leading-relaxed text-sm md:text-base">
-            Suomessa myytävissä, yli 1 gramman painoisissa kultatuotteissa tulee lain mukaan olla pitoisuusleima. Hyvin vanhoissa koruissa, ulkomailta tuoduissa esineissä tai itse tehdyissä töissä leima voi kuitenkin puuttua tai se on voinut kulua näkymättömiin.
-          </p>
-        </details>
-
-        <details class="group bg-white p-6 rounded-2xl border border-gray-100 md:open md:pointer-events-none md:shadow-sm md:hover:shadow-md transition-all">
-          <summary class="flex justify-between items-center font-bold text-gray-900 list-none cursor-pointer md:cursor-default">
-            <span>Mistä tietää onko esine kultaa vai kullattu?</span>
-            <span class="transition group-open:rotate-180 md:hidden">▼</span>
-          </summary>
-          <p class="text-gray-600 mt-4 leading-relaxed text-sm md:text-base">
-            Varmin keino on etsiä leimat (esim. 585 tai 750). Toinen kotikonsti on magneetti: aito kulta ei ole magneettista. Jos koru tarttuu magneettiin, se on todennäköisesti kullattua rautaa. Myös kuluneet kohdat, joista paistaa toinen väri läpi, paljastavat esineen olevan vain kullattu.
-          </p>
-        </details>
-
-        <details class="group bg-white p-6 rounded-2xl border border-gray-100 md:open md:pointer-events-none md:shadow-sm md:hover:shadow-md transition-all">
-          <summary class="flex justify-between items-center font-bold text-gray-900 list-none cursor-pointer md:cursor-default">
-            <span>Kannattaako kulta myydä juuri nyt?</span>
-            <span class="transition group-open:rotate-180 md:hidden">▼</span>
-          </summary>
-          <p class="text-gray-600 mt-4 leading-relaxed text-sm md:text-base">
-            Kullan hinta on historiallisesti erittäin korkealla tasolla. Jos sinulla on tarpeettomia koruja, rikkinäistä kultaa tai parittomia korvakoruja, nykyinen markkinatilanne on myyjän kannalta erinomainen.
-          </p>
-        </details>
-
-        <details class="group bg-white p-6 rounded-2xl border border-gray-100 md:open md:pointer-events-none md:shadow-sm md:hover:shadow-md transition-all">
-          <summary class="flex justify-between items-center font-bold text-gray-900 list-none cursor-pointer md:cursor-default">
-            <span>Miten kullan maailmanmarkkinahinta määräytyy?</span>
-            <span class="transition group-open:rotate-180 md:hidden">▼</span>
-          </summary>
-          <p class="text-gray-600 mt-4 leading-relaxed text-sm md:text-base">
-            Kullan hinta (spot-hinta) määräytyy kansainvälisissä pörsseissä kysynnän ja tarjonnan mukaan. Siihen vaikuttavat maailmantalouden tilanne, dollarin kurssi, inflaatio ja geopoliittinen epävarmuus. Kultalaskuri.fi seuraa tätä hintaa reaaliajassa.
-          </p>
-        </details>
-
+        {faqItems.map(item => (
+          <FaqItem question={item.question} answer={item.answer} />
+        ))}
       </div>
     </div>
   </section>
 
+  <!-- FAQ:n desktop-tila: avataan heti ilman vilkkumista -->
+  <script is:inline>
+    if (window.matchMedia('(min-width: 768px)').matches) {
+      document.querySelectorAll('#ukk details').forEach(function(d) { d.open = true; });
+    }
+  </script>
+
+  <!-- ════════════════════════════════════════════ -->
+  <!-- SCROLL TO TOP                               -->
+  <!-- ════════════════════════════════════════════ -->
   <button 
     id="scroll-to-top" 
-    class="fixed bottom-6 right-6 z-50 p-4 bg-gradient-to-r from-gold-400 to-gold-600 text-[#0B0F19] rounded-full shadow-lg shadow-gold-400/20 opacity-0 translate-y-10 transition-all duration-300 hover:scale-110 focus:outline-none pointer-events-none"
+    class="fixed bottom-6 right-6 z-50 p-4 bg-gradient-to-r from-gold-400 to-gold-600 
+      text-[#0B0F19] rounded-full shadow-lg shadow-gold-400/20 opacity-0 translate-y-10 
+      transition-all duration-300 hover:scale-110 focus:outline-none pointer-events-none"
     aria-label="Palaa ylös"
   >
     <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
@@ -334,65 +363,54 @@ const schemaData = generateIndexSchema(spot, prices.k14);
     </svg>
   </button>
 
- <script>
-  // @ts-nocheck
-  /**
-   * Debounce-apufunktio...
-  /**
-   * Debounce-apufunktio suorituskyvyn parantamiseen
-   * @param {Function} fn - Suoritettava funktio
-   * @param {number} [ms=150] - Viive millisekunteina
-   * @returns {Function}
-   */
-  function debounce(fn, ms) {
-    if (ms === undefined) ms = 150;
-    /** @type {ReturnType<typeof setTimeout> | undefined} */
-    let timer;
-    return function() {
-      clearTimeout(timer);
-      const args = arguments;
-      timer = setTimeout(function() { fn.apply(null, args); }, ms);
-    };
-  }
-
-  // Details-elementtien tilan tarkistus (UKK-osio)
-  function checkDetailsState() {
-    const details = document.querySelectorAll('details');
-    if (window.innerWidth >= 768) {
-      details.forEach(function(d) { d.setAttribute('open', ''); });
-    } else {
-      details.forEach(function(d) { d.removeAttribute('open'); });
+  <!-- ════════════════════════════════════════════ -->
+  <!-- PÄÄSCRIPT                                   -->
+  <!-- ════════════════════════════════════════════ -->
+  <script>
+    function debounce<T extends (...args: unknown[]) => void>(
+      fn: T,
+      ms = 150
+    ): (...args: Parameters<T>) => void {
+      let timer: ReturnType<typeof setTimeout>;
+      return (...args) => {
+        clearTimeout(timer);
+        timer = setTimeout(() => fn(...args), ms);
+      };
     }
-  }
 
-  checkDetailsState();
-  window.addEventListener('resize', debounce(checkDetailsState, 150));
-
-  // Scroll-to-top -painikkeen logiikka
-  var scrollBtn = document.getElementById('scroll-to-top');
-  
-  function handleScroll() {
-    if (window.scrollY > 300) {
-      if (scrollBtn) scrollBtn.classList.remove('opacity-0', 'translate-y-10', 'pointer-events-none');
-    } else {
-      if (scrollBtn) scrollBtn.classList.add('opacity-0', 'translate-y-10', 'pointer-events-none');
+    // FAQ: synkronoi details-elementtien tila ikkunan koon muuttuessa
+    function syncDetailsState(): void {
+      const isDesktop = window.matchMedia('(min-width: 768px)').matches;
+      document.querySelectorAll('#ukk details').forEach(d => {
+        d.toggleAttribute('open', isDesktop);
+      });
     }
-  }
 
-  window.addEventListener('scroll', debounce(handleScroll, 50));
+    window.addEventListener('resize', debounce(syncDetailsState));
 
-  if (scrollBtn) {
-    scrollBtn.addEventListener('click', function() {
+    // Scroll-to-top
+    const scrollBtn = document.getElementById('scroll-to-top');
+
+    function handleScroll(): void {
+      if (window.scrollY > 300) {
+        scrollBtn?.classList.remove('opacity-0', 'translate-y-10', 'pointer-events-none');
+      } else {
+        scrollBtn?.classList.add('opacity-0', 'translate-y-10', 'pointer-events-none');
+      }
+    }
+
+    window.addEventListener('scroll', debounce(handleScroll, 50));
+    scrollBtn?.addEventListener('click', () => {
       window.scrollTo({ top: 0, behavior: 'smooth' });
     });
-  }
 
-  // Animaatioiden observer
-  var observer = new IntersectionObserver(function(entries) {
-    entries.forEach(function(entry) {
-      if (entry.isIntersecting) entry.target.classList.add('active');
+    // Reveal-animaatiot
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) entry.target.classList.add('active');
+      });
     });
-  });
-  document.querySelectorAll('.reveal').forEach(function(el) { observer.observe(el); });
-</script>
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+  </script>
+
 </BaseLayout>
