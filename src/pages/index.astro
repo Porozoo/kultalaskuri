@@ -334,38 +334,65 @@ const schemaData = generateIndexSchema(spot, prices.k14);
     </svg>
   </button>
 
-  <script>
-    function checkDetailsState() {
-      const details = document.querySelectorAll('details');
-      if (window.innerWidth >= 768) {
-        details.forEach(d => d.setAttribute('open', ''));
-      } else {
-        details.forEach(d => d.removeAttribute('open'));
-      }
+ <script>
+  // @ts-nocheck
+  /**
+   * Debounce-apufunktio...
+  /**
+   * Debounce-apufunktio suorituskyvyn parantamiseen
+   * @param {Function} fn - Suoritettava funktio
+   * @param {number} [ms=150] - Viive millisekunteina
+   * @returns {Function}
+   */
+  function debounce(fn, ms) {
+    if (ms === undefined) ms = 150;
+    /** @type {ReturnType<typeof setTimeout> | undefined} */
+    let timer;
+    return function() {
+      clearTimeout(timer);
+      const args = arguments;
+      timer = setTimeout(function() { fn.apply(null, args); }, ms);
+    };
+  }
+
+  // Details-elementtien tilan tarkistus (UKK-osio)
+  function checkDetailsState() {
+    const details = document.querySelectorAll('details');
+    if (window.innerWidth >= 768) {
+      details.forEach(function(d) { d.setAttribute('open', ''); });
+    } else {
+      details.forEach(function(d) { d.removeAttribute('open'); });
     }
+  }
 
-    checkDetailsState();
-    window.addEventListener('resize', checkDetailsState);
+  checkDetailsState();
+  window.addEventListener('resize', debounce(checkDetailsState, 150));
 
-    const scrollBtn = document.getElementById('scroll-to-top');
-    
-    window.addEventListener('scroll', () => {
-      if (window.scrollY > 300) {
-        scrollBtn?.classList.remove('opacity-0', 'translate-y-10', 'pointer-events-none');
-      } else {
-        scrollBtn?.classList.add('opacity-0', 'translate-y-10', 'pointer-events-none');
-      }
-    });
+  // Scroll-to-top -painikkeen logiikka
+  var scrollBtn = document.getElementById('scroll-to-top');
+  
+  function handleScroll() {
+    if (window.scrollY > 300) {
+      if (scrollBtn) scrollBtn.classList.remove('opacity-0', 'translate-y-10', 'pointer-events-none');
+    } else {
+      if (scrollBtn) scrollBtn.classList.add('opacity-0', 'translate-y-10', 'pointer-events-none');
+    }
+  }
 
-    scrollBtn?.addEventListener('click', () => {
+  window.addEventListener('scroll', debounce(handleScroll, 50));
+
+  if (scrollBtn) {
+    scrollBtn.addEventListener('click', function() {
       window.scrollTo({ top: 0, behavior: 'smooth' });
     });
+  }
 
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) entry.target.classList.add('active');
-      });
+  // Animaatioiden observer
+  var observer = new IntersectionObserver(function(entries) {
+    entries.forEach(function(entry) {
+      if (entry.isIntersecting) entry.target.classList.add('active');
     });
-    document.querySelectorAll('.reveal').forEach((el) => observer.observe(el));
-  </script>
+  });
+  document.querySelectorAll('.reveal').forEach(function(el) { observer.observe(el); });
+</script>
 </BaseLayout>

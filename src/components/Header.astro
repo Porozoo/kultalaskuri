@@ -35,6 +35,7 @@ const navLinks = [
           id="mobile-menu-btn"
           class="relative z-50 p-2 text-gray-400 hover:text-white transition-colors focus:outline-none"
           aria-label="Avaa valikko"
+          aria-expanded="false"
         >
           <svg id="menu-icon" class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
@@ -75,6 +76,12 @@ const navLinks = [
 
   function toggleMenu() {
     isMenuOpen = !isMenuOpen;
+    
+    // Päivitä saavutettavuusattribuutit
+    if (btn) {
+      btn.setAttribute('aria-expanded', String(isMenuOpen));
+      btn.setAttribute('aria-label', isMenuOpen ? 'Sulje valikko' : 'Avaa valikko');
+    }
     
     if (isMenuOpen) {
       // Avaa

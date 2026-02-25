@@ -42,13 +42,15 @@ export default function GoldCalculator({ spotPriceEurPerGram }: Props) {
 
         {/* Paino */}
         <div>
-          <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">
+          <label htmlFor="gold-weight" className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">
             Paino (grammaa)
           </label>
           <div className="relative group">
             <input
+              id="gold-weight"
               type="number"
               inputMode="decimal"
+              aria-label="Kullan paino grammoina"
               value={weight}
               onChange={(e) => setWeight(e.target.value)}
               placeholder="0.00"

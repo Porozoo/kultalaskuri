@@ -52,7 +52,7 @@ export default function JewelryWeightEstimator({ spotPrice }: Props) {
   const [selectedSize, setSelectedSize] = useState<number | null>(1); // Oletus: Keskikoko
 
   const calculateEstimate = (weight: number) => {
-    const estimate = weight * spotPrice * 0.585 * 0.80; 
+    const estimate = weight * spotPrice * 0.585 * 0.81; 
     return new Intl.NumberFormat('fi-FI', { style: 'currency', currency: 'EUR' }).format(estimate);
   };
 
