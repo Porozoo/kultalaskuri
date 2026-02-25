@@ -2,7 +2,7 @@
 import { defineConfig } from 'astro/config';
 import react from '@astrojs/react';
 import tailwind from '@astrojs/tailwind';
-import sitemap from '@astrojs/sitemap';
+// import sitemap from '@astrojs/sitemap'; // POISTETTU
 import AstroPWA from '@vite-pwa/astro';
 
 export default defineConfig({
@@ -14,7 +14,7 @@ export default defineConfig({
     tailwind({
       applyBaseStyles: false,
     }),
-    sitemap(),
+    // sitemap(), // POISTETTU
     
     AstroPWA({
       registerType: 'autoUpdate',
@@ -22,9 +22,6 @@ export default defineConfig({
       workbox: {
         // Staattiset tiedostot välimuistiin (myös fontit)
         globPatterns: ['**/*.{css,js,html,svg,png,ico,txt,woff2}']
-        // API runtimeCaching poistettu – ei tarvita, koska
-        // API-kutsut tehdään build-aikana (GitHub Actions),
-        // ei selaimessa.
       }
     }),
   ],
