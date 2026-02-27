@@ -1,4 +1,5 @@
 ---
+// FaqItem.astro
 interface Props {
   question: string;
   answer: string;
@@ -12,8 +13,11 @@ const { question, answer } = Astro.props;
   <summary class="flex justify-between items-center font-bold text-gray-900 
     list-none cursor-pointer md:cursor-default">
     <span>{question}</span>
-    <span class="transition group-open:rotate-180 md:hidden text-gray-400">▼</span>
+    <span class="transition group-open:rotate-180 md:hidden text-gray-400">
+      ▼
+    </span>
   </summary>
-  <!-- Turvallinen: data tulee staattisesta frontmatterista, ei käyttäjäsyötteestä -->
-  <p class="text-gray-600 mt-4 leading-relaxed text-sm md:text-base" set:html={answer} />
+  {/* Turvallinen: data tulee staattisesta frontmatterista */}
+  <p class="text-gray-600 mt-4 leading-relaxed text-sm md:text-base" 
+    set:html={answer} />
 </details>
