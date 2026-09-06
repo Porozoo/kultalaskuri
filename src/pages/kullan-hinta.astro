@@ -166,10 +166,10 @@ const faqItems = (schemaData["@graph"].find((n: any) => n["@type"] === "FAQPage"
     <div class="max-w-5xl mx-auto relative z-10">
 
       <nav aria-label="Murupolku" class="mb-6">
-        <ol class="flex items-center gap-2 text-xs text-gray-500">
+        <ol class="flex items-center gap-2 text-xs text-gray-400">
           <li><a href="/" class="hover:text-gold-400 transition-colors">Etusivu</a></li>
           <li aria-hidden="true">›</li>
-          <li aria-current="page" class="text-gray-400">Kullan hinta</li>
+          <li aria-current="page" class="text-gray-300">Kullan hinta</li>
         </ol>
       </nav>
 
@@ -232,7 +232,7 @@ const faqItems = (schemaData["@graph"].find((n: any) => n["@type"] === "FAQPage"
               <tr class="hover:bg-gray-50 transition-colors">
                 <td class="py-3.5 px-5 font-bold text-gray-900">
                   {row.label}
-                  {row.key === currentMonthKey && <span class="ml-1.5 text-xs font-medium text-gray-400">(kesken)</span>}
+                  {row.key === currentMonthKey && <span class="ml-1.5 text-xs font-medium text-gray-500">(kesken)</span>}
                 </td>
                 <td class="py-3.5 px-5 text-right tabular-nums font-bold">{fmt(row.avg)}</td>
                 <td class="py-3.5 px-5 text-right tabular-nums text-gray-500">{fmt(row.max)}</td>

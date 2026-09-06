@@ -339,7 +339,7 @@ export default function GoldCalculator({ spotPriceEurPerGram, partner }: Props) 
                       type="button"
                       onClick={() => removeItem(i)}
                       aria-label={`Poista esine ${String(item.weight).replace('.', ',')} g ${item.purity}`}
-                      className="w-6 h-6 flex items-center justify-center rounded-full text-gray-400 hover:text-red-600 hover:bg-red-50 transition-colors no-print"
+                      className="w-6 h-6 flex items-center justify-center rounded-full text-gray-500 hover:text-red-600 hover:bg-red-50 transition-colors no-print"
                     >
                       ×
                     </button>
@@ -439,7 +439,7 @@ export default function GoldCalculator({ spotPriceEurPerGram, partner }: Props) 
               <div className="flex flex-col sm:flex-row gap-3 no-print">
                 <button
                   onClick={handleWhatsAppShare}
-                  className="flex-1 flex items-center justify-center gap-2 bg-[#25D366] hover:bg-[#1ebd5a] text-white px-4 py-3 rounded-xl font-bold transition-colors shadow-sm"
+                  className="flex-1 flex items-center justify-center gap-2 bg-[#25D366] hover:bg-[#1ebd5a] text-[#0B0F19] px-4 py-3 rounded-xl font-bold transition-colors shadow-sm"
                   aria-label="Jaa tulos WhatsAppissa"
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
@@ -536,7 +536,7 @@ export default function GoldCalculator({ spotPriceEurPerGram, partner }: Props) 
                                   placeholder="0"
                                   className="w-full bg-white border border-gray-200 rounded-lg pl-3 pr-7 py-2 text-sm font-bold text-gray-900 text-right tabular-nums outline-none transition-colors focus:border-gold-400 focus:ring-2 focus:ring-gold-400/10"
                                 />
-                                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 font-bold text-sm pointer-events-none select-none">
+                                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 font-bold text-sm pointer-events-none select-none">
                                   €
                                 </span>
                               </div>
@@ -544,7 +544,7 @@ export default function GoldCalculator({ spotPriceEurPerGram, partner }: Props) 
                                 type="button"
                                 onClick={() => removeOffer(offer.id)}
                                 aria-label={`Poista tarjous ${i + 1}`}
-                                className="w-7 h-7 shrink-0 flex items-center justify-center rounded-full text-gray-400 hover:text-red-600 hover:bg-red-50 transition-colors"
+                                className="w-7 h-7 shrink-0 flex items-center justify-center rounded-full text-gray-500 hover:text-red-600 hover:bg-red-50 transition-colors"
                               >
                                 ×
                               </button>
@@ -865,7 +865,7 @@ export default function GoldCalculator({ spotPriceEurPerGram, partner }: Props) 
                 className="bg-gray-50 border border-gray-100 rounded-xl px-4 py-3 text-sm text-gray-500 hover:bg-gray-100 hover:border-gray-200 transition-all text-left w-full"
                 aria-label="Kokeile esimerkkiä — laske 14 karaatin 4 gramman sormuksen arvo"
               >
-                <span className="text-[10px] text-gray-400 uppercase tracking-wider font-bold block mb-1">Kokeile esimerkkiä</span>
+                <span className="text-[10px] text-gray-500 uppercase tracking-wider font-bold block mb-1">Kokeile esimerkkiä</span>
                 <span className="text-sm">
                   <span className="font-bold text-gray-700">14K sormus 4 g</span>
                   {' '}≈{' '}
@@ -877,7 +877,7 @@ export default function GoldCalculator({ spotPriceEurPerGram, partner }: Props) 
             )}
 
             {/* Mobile-only: vihje vasemmalle ylhäälle (mobiilissa "vasen" on oikeasti yläpuolella) */}
-            <p className="lg:hidden text-xs text-gray-400 text-center -mt-1">
+            <p className="lg:hidden text-xs text-gray-500 text-center -mt-1">
               <Calculator size={12} className="inline -mt-0.5 mr-1" />
               Syötä paino ja valitse pitoisuus yltä
             </p>

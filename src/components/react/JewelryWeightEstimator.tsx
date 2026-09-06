@@ -170,11 +170,11 @@ export default function JewelryWeightEstimator({ spotPrice }: Props) {
                 <p className="text-sm text-gray-500 mb-6 min-h-[40px] hidden md:block">{size.desc}</p>
                 
                 <div className="text-xl md:text-3xl font-black text-gray-900 tracking-tight mt-1 md:mt-0">
-                  ~{size.weight}<span className="text-sm md:text-lg font-bold text-gray-400 ml-0.5">g</span>
+                  ~{size.weight}<span className="text-sm md:text-lg font-bold text-gray-500 ml-0.5">g</span>
                 </div>
                 {/* Euroarvio suoraan korttiin — kaikki koot vertailtavissa yhdellä silmäyksellä */}
                 {spotPrice > 0 && (
-                  <div className={`text-xs md:text-sm font-bold mt-1 tabular-nums ${isSelected ? 'text-gold-600' : 'text-gray-400'}`}>
+                  <div className={`text-xs md:text-sm font-bold mt-1 tabular-nums ${isSelected ? 'text-gold-600' : 'text-gray-500'}`}>
                     ≈ {compactEstimate(size.weight)}
                   </div>
                 )}
@@ -198,7 +198,7 @@ export default function JewelryWeightEstimator({ spotPrice }: Props) {
               <p className="text-gray-400 text-xs md:text-sm">
                 Laskelma: {currentData.sizes[selectedSize].weight}g × {selectedPurity} × tavoitehinta
               </p>
-              <p className="text-gray-500 text-[11px] mt-2">
+              <p className="text-gray-400 text-[11px] mt-2">
                 Suuntaa-antava arvio keskipainolla — tarkka arvo selviää punnitsemalla.
               </p>
             </div>

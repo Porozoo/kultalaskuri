@@ -243,7 +243,7 @@ export default function GoldPriceChart({ data }: Props) {
                 className={`px-3 py-1 rounded-md text-[11px] font-bold transition-all duration-150 ${
                   range === r.key
                     ? 'bg-[#D4AF37] text-[#0B0F19] shadow-sm'
-                    : 'text-gray-500 hover:text-gray-200'
+                    : 'text-gray-400 hover:text-gray-200'
                 }`}
               >
                 {r.label}

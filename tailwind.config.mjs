@@ -16,7 +16,7 @@ export default {
           300: '#ECD895',
           400: '#D4AF37', // Classic Gold
           500: '#B59428',
-          600: '#8E731C',
+          600: '#856B19', // tummennettu 9/2026: AA-kontrasti gray-50/gold-50-taustoilla (oli #8E731C, 4,35:1)
           700: '#6B5615',
           glow: '#F9E29C', // Hehkuva vaalea
         },

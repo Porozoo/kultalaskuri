@@ -57,10 +57,10 @@ const schemaData = {
 
     <div class="max-w-3xl mx-auto relative z-10 text-center">
       <nav aria-label="Murupolku" class="mb-6">
-        <ol class="flex items-center justify-center gap-2 text-xs text-gray-500">
+        <ol class="flex items-center justify-center gap-2 text-xs text-gray-400">
           <li><a href="/" class="hover:text-gold-400 transition-colors">Etusivu</a></li>
           <li aria-hidden="true">›</li>
-          <li aria-current="page" class="text-gray-400">Hintawidget</li>
+          <li aria-current="page" class="text-gray-300">Hintawidget</li>
         </ol>
       </nav>
 
@@ -91,12 +91,12 @@ const schemaData = {
           <div class="max-w-[320px] bg-[#0B0F19] border border-gold-400/30 rounded-[14px] px-[18px] py-4" aria-label="Widgetin esikatselu">
             <div class="flex justify-between items-center mb-2.5">
               <span class="text-[11px] font-bold tracking-[0.1em] uppercase text-gray-400">Kullan hinta</span>
-              <span class="text-[10px] text-gray-500">{updatedDate}</span>
+              <span class="text-[10px] text-gray-400">{updatedDate}</span>
             </div>
             <div class="text-[28px] font-extrabold text-white leading-none mb-0.5 tabular-nums">
               {spot > 0 ? fmt(spot) : '–'} <span class="text-sm text-gold-400">€/g</span>
             </div>
-            <div class="text-[10px] text-gray-500 mb-3">24K spot-hinta</div>
+            <div class="text-[10px] text-gray-400 mb-3">24K spot-hinta</div>
             <div class="mb-3">
               <div class="flex justify-between items-baseline py-1.5 border-b border-white/10">
                 <span class="text-xs text-gray-400">585 (14K) tavoitehinta</span>
@@ -108,7 +108,7 @@ const schemaData = {
               </div>
             </div>
             <span class="block text-center text-xs font-bold text-[#0B0F19] bg-gold-400 rounded-lg px-2.5 py-2">Laske kultasi arvo →</span>
-            <div class="text-center mt-2"><span class="text-[10px] text-gray-500">Lähde: Kultalaskuri.fi</span></div>
+            <div class="text-center mt-2"><span class="text-[10px] text-gray-400">Lähde: Kultalaskuri.fi</span></div>
           </div>
         </div>
 
@@ -131,15 +131,15 @@ const schemaData = {
 
           <div class="mt-8 space-y-3 text-sm text-gray-600">
             <div class="flex items-start gap-3">
-              <span class="w-6 h-6 rounded-full bg-green-100 text-green-600 flex items-center justify-center shrink-0 mt-0.5">✓</span>
+              <span class="w-6 h-6 rounded-full bg-green-100 text-green-700 flex items-center justify-center shrink-0 mt-0.5">✓</span>
               <span><strong>Ilmainen</strong> — ainoa ehto on, että "Lähde: Kultalaskuri.fi" -linkki säilyy näkyvissä.</span>
             </div>
             <div class="flex items-start gap-3">
-              <span class="w-6 h-6 rounded-full bg-green-100 text-green-600 flex items-center justify-center shrink-0 mt-0.5">✓</span>
+              <span class="w-6 h-6 rounded-full bg-green-100 text-green-700 flex items-center justify-center shrink-0 mt-0.5">✓</span>
               <span><strong>Kevyt</strong> — noin 2 kt JavaScriptiä, ei ulkoisia kirjastoja, ei evästeitä.</span>
             </div>
             <div class="flex items-start gap-3">
-              <span class="w-6 h-6 rounded-full bg-green-100 text-green-600 flex items-center justify-center shrink-0 mt-0.5">✓</span>
+              <span class="w-6 h-6 rounded-full bg-green-100 text-green-700 flex items-center justify-center shrink-0 mt-0.5">✓</span>
               <span><strong>Turvallinen</strong> — jos hintadata ei ole saatavilla, widget ei riko sivuasi.</span>
             </div>
           </div>
